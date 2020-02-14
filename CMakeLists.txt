@@ -32,13 +32,13 @@ SET(CMAKE_CXX_STANDARD_REQUIRED on)
 
 SET(VENDOR_DIR common/vendor)
 
-IF(${CMAKE_CXX_COMPILER} STREQUAL "/usr/bin/clang++") 
+IF(${CMAKE_CXX_COMPILER_ID} MATCHES "(C|c?)lang")
   SET(CMAKE_CXX_FLAGS_COMMON
       "-std=c++11 \
       -stdlib=libc++ -pthread")
 ENDIF()
 
-IF(${CMAKE_CXX_COMPILER} STREQUAL "/usr/bin/g++") 
+IF(${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
   SET(CMAKE_CXX_FLAGS_COMMON
       "-std=c++11 -pthread")
 ENDIF()
