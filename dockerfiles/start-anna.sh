@@ -39,7 +39,7 @@ mkdir -p conf
 # determine separate private and public IP addresses. Otherwise, we use the
 # same one for both.
 IS_EC2=`curl -s http://169.254.169.254`
-PRIVATE_IP=`ifconfig eth0 | grep 'inet addr:' | grep -v '127.0.0.1' | cut -d: -f2 | awk '{ print $1 }'`
+PRIVATE_IP=`ifconfig eth0 | grep 'inet' | grep -v inet6 | sed -e 's/^[ \t]*//' | cut -d' ' -f2`
 if [[ ! -z "$IS_EC2" ]]; then
   PUBLIC_IP=`curl http://169.254.169.254/latest/meta-data/public-ipv4`
 else
@@ -58,8 +58,13 @@ if [[ -z "$REPO_BRANCH" ]]; then
 fi
 
 git remote add origin https://github.com/$REPO_ORG/anna
-git fetch -p origin
+while ! (git fetch -p origin)
+do
+  echo "git fetch failed, retrying"
+done
 git checkout -b brnch origin/$REPO_BRANCH
+git submodule sync
+git submodule update
 
 # Compile the latest version of the code on the branch we just check out.
 cd build && make -j2 && cd ..
